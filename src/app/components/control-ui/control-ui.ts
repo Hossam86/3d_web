@@ -14,7 +14,7 @@ export class ControlUi {
   boxHeight: number = 1.0;
   boxDepth: number = 1.0;
   faces = ['Right (+X)', 'Left (-X)', 'Top (+Y)', 'Bottom (-Y)', 'Front (+Z)', 'Back (-Z)'];
-
+  glossyFinish: boolean = false;
 
   constructor(private renderingService: RenderingService) { }
 
@@ -60,5 +60,10 @@ export class ControlUi {
   }
 
 
+  onFinishStyleToggle(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const glossyFinish = input.checked;
+    this.renderingService.setFinishStyle('Box', glossyFinish ? 'Glossy' : 'Matte');
+  }
 
 }

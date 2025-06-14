@@ -1,22 +1,30 @@
 import { Injectable } from '@angular/core';
 import * as THREE from 'three';
-import { initSplineTexture } from 'three/examples/jsm/Addons.js';
+import {
+  initSplineTexture,
+  TechnicolorShader,
+} from 'three/examples/jsm/Addons.js';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RenderingService {
   // This service is responsible for managing the rendering context and operations
   scene: THREE.Scene = new THREE.Scene();
-  camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
   renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer({ antialias: true });
   canvas: HTMLElement | null = null;
   meshes: { [key: string]: THREE.Mesh } = {};
-  ambientLightColor: THREE.Color = new THREE.Color(255, 255, 255); // White light
-  directionalLightColor: THREE.Color = new THREE.Color(255, 255, 255); // White light
-  meshColor: THREE.Color = new THREE.Color(255, 255, 0); // Green color
+  ambientLightColor: THREE.Color = new THREE.Color(0xffffff); // Dim ambient light
+  directionalLightColor: THREE.Color = new THREE.Color(0xffffff); // Bright directional light
+  meshColor: THREE.Color = new THREE.Color(0x00ff00); // Default mesh color
 
-  constructor() { }
+  constructor() {}
 
   init(canvasElement: HTMLElement, width: number, height: number): void {
     this.canvas = canvasElement;
@@ -24,10 +32,15 @@ export class RenderingService {
 
     this.renderer.setSize(width, height);
     this.canvas.appendChild(this.renderer.domElement);
-    //lights 
-    const ambientLight = new THREE.AmbientLight(this.ambientLightColor);
-    const directionalLight = new THREE.DirectionalLight(this.directionalLightColor, 0.5);
+    //lights
+    const ambientLight = new THREE.AmbientLight(this.ambientLightColor, 0.5);
     this.scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(
+      this.directionalLightColor,
+      1.0
+    );
+    directionalLight.position.set(5, 5, 5).normalize();
     this.scene.add(directionalLight);
 
     //mesh
@@ -41,7 +54,19 @@ export class RenderingService {
     const geometry = new THREE.BoxGeometry(1.0, 1.0, 1.0);
 
     //material
-    const defaultMaterials = Array(6).fill(null).map(() => new THREE.MeshBasicMaterial({ color: 0xffffff }));
+    const defaultMaterials = Array(6)
+      .fill(null)
+      .map(
+        () =>
+          new THREE.MeshPhysicalMaterial({
+            color: this.meshColor,
+            roughness: 0.2,
+            metalness: 0.8,
+            clearcoat: 1.0,
+            clearcoatRoughness: 0.1,
+            reflectivity: 1.0,
+          })
+      );
     const mesh = new THREE.Mesh(geometry, defaultMaterials);
     return mesh;
   }
@@ -66,7 +91,6 @@ export class RenderingService {
     }
   }
 
-
   updateBoxDimensions(width: number, height: number, depth: number): void {
     if (this.meshes['Box']) {
       const geometry = new THREE.BoxGeometry(width, height, depth);
@@ -76,20 +100,68 @@ export class RenderingService {
   }
 
   // texture update method
-  updateBoxFaceTexture(meshName: string, faceIndex: number, imageUrl: string): void {
+  updateBoxFaceTexture(
+    meshName: string,
+    faceIndex: number,
+    imageUrl: string
+  ): void {
     if (this.meshes[meshName]) {
       const mesh = this.meshes[meshName];
       const textureLoader = new THREE.TextureLoader();
       textureLoader.load(imageUrl, (texture) => {
         // Create a new material for the specific face
-        const materials = mesh.material as THREE.MeshBasicMaterial[];
+        const materials = mesh.material as THREE.MeshPhysicalMaterial[];
         if (!materials) {
           console.error(`Mesh ${meshName} does not have a valid material.`);
           return;
         }
-        materials[faceIndex] = new THREE.MeshBasicMaterial({ map: texture });
-        mesh.material = materials; // Update the mesh with the new materials
+        // Clone the materials array to ensure Three.js detects the change
+        const newMaterials = materials.map((mat, idx) =>
+          idx === faceIndex
+            ? new THREE.MeshPhysicalMaterial({
+                // color: this.meshColor,
+                roughness: 0.2,
+                metalness: 0.8,
+                clearcoat: 1.0,
+                clearcoatRoughness: 0.1,
+                reflectivity: 1.0,
+                normalMap: texture,
+              })
+            : mat.clone()
+        );
+        mesh.material = newMaterials; // Update the mesh with the new materials
+        mesh.material[faceIndex].needsUpdate = true;
       });
+    } else {
+      console.error(`Mesh ${meshName} not found.`);
+    }
+  }
+
+  setFinishStyle(meshName: string, style: 'Glossy' | 'Matte'): void {
+    if (this.meshes[meshName]) {
+      const mesh = this.meshes[meshName];
+      const materials = mesh.material as THREE.MeshPhysicalMaterial[];
+      if (!materials) {
+        console.error(`Mesh ${meshName} does not have a valid material.`);
+        return;
+      }
+      materials.forEach((material) => {
+        if (style === 'Glossy') {
+          material.roughness = 0.2;
+          material.metalness = 0.8;
+          material.clearcoat = 1.0;
+          material.clearcoatRoughness = 0.1;
+          material.reflectivity = 1.0;
+        } else {
+          material.roughness = 1.0;
+          material.metalness = 0.0;
+          material.clearcoat = 0.0;
+          material.clearcoatRoughness = 1.0;
+          material.reflectivity = 0.0;
+        }
+        material.needsUpdate = true; // Ensure the material is updated
+      });
+      mesh.material = materials; // Update the mesh with the new materials
     } else {
       console.error(`Mesh ${meshName} not found.`);
     }
