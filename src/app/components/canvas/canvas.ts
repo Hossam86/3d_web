@@ -1,4 +1,5 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { RenderingService } from '../../services/rendering.service';
 import * as THREE from 'three';
 
 @Component({
@@ -8,41 +9,19 @@ import * as THREE from 'three';
   styleUrl: './canvas.css'
 })
 export class Canvas implements AfterViewInit {
+  @ViewChild('canvasContainer', { static: true }) containerRef!: ElementRef;
 
- constructor() {}
+  constructor(private renderService:RenderingService) { }
 
-    ngAfterViewInit(): void {
-      // This method is called after the view has been initialized
-  
-      const width = window.innerWidth, height = window.innerHeight;
-  
-      // init
-  
-      const camera = new THREE.PerspectiveCamera(70, width / height, 0.01, 10);
-      camera.position.z = 1;
-  
-      const scene = new THREE.Scene();
-  
-      const geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-      const material = new THREE.MeshNormalMaterial();
-  
-      const mesh = new THREE.Mesh(geometry, material);
-      scene.add(mesh);
-  
-      const renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(width, height);
-      renderer.setAnimationLoop(animate);
-      document.body.appendChild(renderer.domElement);
-  
-      // animation
-  
-      function animate(time: number) {
-  
-        mesh.rotation.x = time / 2000;
-        mesh.rotation.y = time / 1000;
-  
-        renderer.render(scene, camera);
-  
-      }
-    }
+  ngAfterViewInit(): void {
+    // This method is called after the view has been initialized
+    
+    // Initialize the rendering service
+    const container = this.containerRef.nativeElement;
+    // const { width, height } = container.getBoundingClientRect();
+    const width = container.clientWidth;
+    const h = container.clientHeight;
+    const height = 900;
+    this.renderService.init(container, width, height);
+  }
 }
