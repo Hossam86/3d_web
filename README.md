@@ -59,13 +59,13 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
 
 
-## requirement 
-[x] create a BoxGeometry with an initial size of 1×1×1
-[x] Center the box in a scene with basic ambient and directional lighting (no external models).
-[x] Enable the box to slowly auto-rotate around its Y-axis.
-[] Provide six file input fields (one for each face) allowing the user to upload custom PNG/JPG images.
-[] Upon image upload, map each texture to the corresponding face of the box in real time.
-[x] Sliders (or number inputs) to adjust the Width, Height, and Depth of the box, with a range from 0.2 to 2.0. Changing the box's dimensions should rebuild the geometry while preserving the current textures and material settings
-[] control to start/stop the box's rotation.
-[] Include a UI toggle to switch between Matte (high roughness) and Glossy (low roughness with clear-coat) finishes.
-[] control to modify the sharpness of the scene.
+## Requirement 
+- [x] Create a BoxGeometry with an initial size of 1×1×1
+- [x] Center the box in a scene with basic ambient and directional lighting (no external models).
+- [x] Enable the box to slowly auto-rotate around its Y-axis.
+- [x] Provide six file input fields (one for each face) allowing the user to upload custom PNG/JPG images.
+- [x] Upon image upload, map each texture to the corresponding face of the box in real time.
+- [x] Sliders (or number inputs) to adjust the Width, Height, and Depth of the box, with a range from 0.2 to 2.0. Changing the box's dimensions should rebuild the geometry while preserving the current textures and material settings
+- [ ] control to start/stop the box's rotation.
+- [ ] Include a UI toggle to switch between Matte (high roughness) and Glossy (low roughness with clear-coat) finishes.
+- [ ] control to modify the sharpness of the scene.

@@ -15,4 +15,11 @@
             <span style="margin-left: 0.5em;">{{ boxDepth.toFixed(1) }}</span>
         </label>
     </div>
+
+
+    <div class="file-selector" *ngFor="let face of faces; let i = index">
+        <label>{{ face }} Face:
+            <input type="file" accept="image/*" (change)="onFileSelected($event, i)" />
+        </label>
+    </div>
 </div>

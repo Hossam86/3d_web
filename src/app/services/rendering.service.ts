@@ -11,10 +11,10 @@ export class RenderingService {
   camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer({ antialias: true });
   canvas: HTMLElement | null = null;
-  meshes: {[key:string]:THREE.Mesh} = {};
+  meshes: { [key: string]: THREE.Mesh } = {};
   ambientLightColor: THREE.Color = new THREE.Color(255, 255, 255); // White light
   directionalLightColor: THREE.Color = new THREE.Color(255, 255, 255); // White light
-  meshColor: THREE.Color = new THREE.Color(255, 0,0); // Green color
+  meshColor: THREE.Color = new THREE.Color(255, 255, 0); // Green color
 
   constructor() { }
 
@@ -26,7 +26,7 @@ export class RenderingService {
     this.canvas.appendChild(this.renderer.domElement);
     //lights 
     const ambientLight = new THREE.AmbientLight(this.ambientLightColor);
-    const directionalLight = new THREE.DirectionalLight( this.directionalLightColor, 0.5 );
+    const directionalLight = new THREE.DirectionalLight(this.directionalLightColor, 0.5);
     this.scene.add(ambientLight);
     this.scene.add(directionalLight);
 
@@ -37,10 +37,12 @@ export class RenderingService {
     this.startRenderingLoop();
   }
 
-  private createMesh(): THREE.Mesh { 
+  private createMesh(): THREE.Mesh {
     const geometry = new THREE.BoxGeometry(1.0, 1.0, 1.0);
-    const material = new THREE.MeshBasicMaterial({color: this.meshColor}); // Green color
-    const mesh = new THREE.Mesh(geometry, material);
+
+    //material
+    const defaultMaterials = Array(6).fill(null).map(() => new THREE.MeshBasicMaterial({ color: 0xffffff }));
+    const mesh = new THREE.Mesh(geometry, defaultMaterials);
     return mesh;
   }
 
@@ -63,7 +65,7 @@ export class RenderingService {
       this.meshes = {};
     }
   }
-  
+
 
   updateBoxDimensions(width: number, height: number, depth: number): void {
     if (this.meshes['Box']) {
@@ -72,5 +74,24 @@ export class RenderingService {
       this.meshes['Box'].geometry = geometry; // Update the mesh with the new geometry
     }
   }
-  
+
+  // texture update method
+  updateBoxFaceTexture(meshName: string, faceIndex: number, imageUrl: string): void {
+    if (this.meshes[meshName]) {
+      const mesh = this.meshes[meshName];
+      const textureLoader = new THREE.TextureLoader();
+      textureLoader.load(imageUrl, (texture) => {
+        // Create a new material for the specific face
+        const materials = mesh.material as THREE.MeshBasicMaterial[];
+        if (!materials) {
+          console.error(`Mesh ${meshName} does not have a valid material.`);
+          return;
+        }
+        materials[faceIndex] = new THREE.MeshBasicMaterial({ map: texture });
+        mesh.material = materials; // Update the mesh with the new materials
+      });
+    } else {
+      console.error(`Mesh ${meshName} not found.`);
+    }
+  }
 }
