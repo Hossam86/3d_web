@@ -12,6 +12,8 @@ export class RenderingService {
   renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer({ antialias: true });
   canvas: HTMLElement | null = null;
   meshes: {[key:string]:THREE.Mesh} = {};
+  ambientLightColor: THREE.Color = new THREE.Color(255, 255, 255); // White light
+  directionalLightColor: THREE.Color = new THREE.Color(255, 255, 255); // White light
 
   constructor() { }
 
@@ -21,6 +23,13 @@ export class RenderingService {
 
     this.renderer.setSize(width, height);
     this.canvas.appendChild(this.renderer.domElement);
+    //lights 
+    const ambientLight = new THREE.AmbientLight(this.ambientLightColor);
+    const directionalLight = new THREE.DirectionalLight( this.directionalLightColor, 0.5 );
+    this.scene.add(ambientLight);
+    this.scene.add(directionalLight);
+
+    //mesh
     const mesh = this.createMesh();
     this.meshes['Box'] = mesh;
     this.scene.add(mesh);
@@ -28,7 +37,7 @@ export class RenderingService {
   }
 
   private createMesh(): THREE.Mesh { 
-    const geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+    const geometry = new THREE.BoxGeometry(0.7, 0.7, 0.7);
     const material = new THREE.MeshNormalMaterial();
     const mesh = new THREE.Mesh(geometry, material);
     return mesh;
@@ -37,7 +46,6 @@ export class RenderingService {
   startRenderingLoop(): void {
     const animate = (time: number) => {
       if (this.meshes['Box']) {
-        this.meshes['Box'].rotation.x = time / 2000;
         this.meshes['Box'].rotation.y = time / 1000;
       }
       this.renderer.render(this.scene, this.camera);
