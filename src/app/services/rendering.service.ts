@@ -34,12 +34,11 @@ export class RenderingService {
 
     this.width = width;
     this.height = height;
-    this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.canvas = canvasElement;
-    this.camera.position.z = 3;
-
-
     this.renderer.setSize(width, height);
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    
+    this.canvas = canvasElement;
+
     this.canvas.appendChild(this.renderer.domElement);
     //lights
     const ambientLight = new THREE.AmbientLight(this.ambientLightColor, 0.5);
@@ -57,7 +56,8 @@ export class RenderingService {
     this.meshes['Box'] = mesh;
     this.scene.add(mesh);
     
-    this.scene.background = new THREE.Color(0x112233); // Set background color to black
+    this.scene.background = new THREE.Color('#222'); // Set background color to black
+    this.camera.position.z = 3;
 
     this.startRenderingLoop();
   }
@@ -186,5 +186,15 @@ export class RenderingService {
   setSharpness(pixelRatio: number): void {
     this.renderer.setPixelRatio(pixelRatio);
     this.renderer.setSize(this.width, this.height, false);
+  }
+
+  setSize(width: number, height: number): void {
+    this.width = width;
+    this.height = height;
+    if (this.renderer) {
+      this.renderer.setSize(width, height);
+      this.camera.aspect = width / height;
+      this.camera.updateProjectionMatrix();
+    }
   }
 }
