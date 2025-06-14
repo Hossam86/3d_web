@@ -8,18 +8,19 @@ import { initSplineTexture } from 'three/examples/jsm/Addons.js';
 export class RenderingService {
   // This service is responsible for managing the rendering context and operations
   scene: THREE.Scene = new THREE.Scene();
-  camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
+  camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer({ antialias: true });
   canvas: HTMLElement | null = null;
   meshes: {[key:string]:THREE.Mesh} = {};
   ambientLightColor: THREE.Color = new THREE.Color(255, 255, 255); // White light
   directionalLightColor: THREE.Color = new THREE.Color(255, 255, 255); // White light
+  meshColor: THREE.Color = new THREE.Color(255, 0,0); // Green color
 
   constructor() { }
 
   init(canvasElement: HTMLElement, width: number, height: number): void {
     this.canvas = canvasElement;
-    this.camera.position.z = 1;
+    this.camera.position.z = 3;
 
     this.renderer.setSize(width, height);
     this.canvas.appendChild(this.renderer.domElement);
@@ -37,8 +38,8 @@ export class RenderingService {
   }
 
   private createMesh(): THREE.Mesh { 
-    const geometry = new THREE.BoxGeometry(0.7, 0.7, 0.7);
-    const material = new THREE.MeshNormalMaterial();
+    const geometry = new THREE.BoxGeometry(1.0, 1.0, 1.0);
+    const material = new THREE.MeshBasicMaterial({color: this.meshColor}); // Green color
     const mesh = new THREE.Mesh(geometry, material);
     return mesh;
   }
@@ -46,7 +47,7 @@ export class RenderingService {
   startRenderingLoop(): void {
     const animate = (time: number) => {
       if (this.meshes['Box']) {
-        this.meshes['Box'].rotation.y = time / 1000;
+        this.meshes['Box'].rotation.y = time / 2000;
       }
       this.renderer.render(this.scene, this.camera);
       requestAnimationFrame(animate);
@@ -60,6 +61,15 @@ export class RenderingService {
       this.renderer.dispose();
       this.scene.clear();
       this.meshes = {};
+    }
+  }
+  
+
+  updateBoxDimensions(width: number, height: number, depth: number): void {
+    if (this.meshes['Box']) {
+      const geometry = new THREE.BoxGeometry(width, height, depth);
+      this.meshes['Box'].geometry.dispose(); // Dispose of the old geometry
+      this.meshes['Box'].geometry = geometry; // Update the mesh with the new geometry
     }
   }
   

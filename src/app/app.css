@@ -4,11 +4,9 @@
 }
 
 .controls {
-  flex: 1; 
-  min-width: 250px; 
-  box-shadow: 2px 0 4px rgba(0,0,0,0.03);
+  width: 25%;
 }
 
 .canvas {
-  flex: 2; 
+  width: 75%;
 }

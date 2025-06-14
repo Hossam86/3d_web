@@ -1,0 +1,18 @@
+.control-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  max-width: 250px;
+}
+
+.slider-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.slider-label {
+  font-size: 0.9em;
+  color: var(--text-color);
+  margin-left: 1em;;
+}
