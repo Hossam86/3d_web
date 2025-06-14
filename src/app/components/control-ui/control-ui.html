@@ -27,4 +27,7 @@
         <input type="checkbox" [checked]="glossyFinish" (change)="onFinishStyleToggle($event)" />
         Glossy Finish
     </label>
+    <button (click)="onToggleRotation()">
+        {{ isRotating ? 'Stop Rotation' : 'Start Rotation' }}
+    </button>
 </div>

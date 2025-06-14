@@ -6,15 +6,22 @@ import { CommonModule } from '@angular/common';
   selector: 'app-control-ui',
   imports: [CommonModule],
   templateUrl: './control-ui.html',
-  styleUrl: './control-ui.css'
+  styleUrl: './control-ui.css',
 })
 export class ControlUi {
-
   boxWidth: number = 1.0;
   boxHeight: number = 1.0;
   boxDepth: number = 1.0;
-  faces = ['Right (+X)', 'Left (-X)', 'Top (+Y)', 'Bottom (-Y)', 'Front (+Z)', 'Back (-Z)'];
+  faces = [
+    'Right (+X)',
+    'Left (-X)',
+    'Top (+Y)',
+    'Bottom (-Y)',
+    'Front (+Z)',
+    'Back (-Z)',
+  ];
   glossyFinish: boolean = false;
+  isRotating: boolean = true;
 
   constructor(private renderingService: RenderingService) { }
 
@@ -24,7 +31,11 @@ export class ControlUi {
     const value = parseFloat(input.value);
     if (!isNaN(value) && value > 0) {
       this.boxWidth = value;
-      this.renderingService.updateBoxDimensions(this.boxWidth, this.boxHeight, this.boxDepth);
+      this.renderingService.updateBoxDimensions(
+        this.boxWidth,
+        this.boxHeight,
+        this.boxDepth
+      );
     }
   }
 
@@ -33,7 +44,11 @@ export class ControlUi {
     const value = parseFloat(input.value);
     if (!isNaN(value) && value > 0) {
       this.boxHeight = value;
-      this.renderingService.updateBoxDimensions(this.boxWidth, this.boxHeight, this.boxDepth);
+      this.renderingService.updateBoxDimensions(
+        this.boxWidth,
+        this.boxHeight,
+        this.boxDepth
+      );
     }
   }
   onBoxDepthChange(event: Event): void {
@@ -41,7 +56,11 @@ export class ControlUi {
     const value = parseFloat(input.value);
     if (!isNaN(value) && value > 0) {
       this.boxDepth = value;
-      this.renderingService.updateBoxDimensions(this.boxWidth, this.boxHeight, this.boxDepth);
+      this.renderingService.updateBoxDimensions(
+        this.boxWidth,
+        this.boxHeight,
+        this.boxDepth
+      );
     }
   }
 
@@ -59,11 +78,17 @@ export class ControlUi {
     }
   }
 
-
   onFinishStyleToggle(event: Event): void {
     const input = event.target as HTMLInputElement;
     const glossyFinish = input.checked;
-    this.renderingService.setFinishStyle('Box', glossyFinish ? 'Glossy' : 'Matte');
+    this.renderingService.setFinishStyle(
+      'Box',
+      glossyFinish ? 'Glossy' : 'Matte'
+    );
   }
 
+  onToggleRotation(): void {
+    this.isRotating = !this.isRotating;
+    this.renderingService.toggleRotation();
+  }
 }

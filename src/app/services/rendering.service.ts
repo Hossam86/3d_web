@@ -23,6 +23,7 @@ export class RenderingService {
   ambientLightColor: THREE.Color = new THREE.Color(0xffffff); // Dim ambient light
   directionalLightColor: THREE.Color = new THREE.Color(0xffffff); // Bright directional light
   meshColor: THREE.Color = new THREE.Color(0x00ff00); // Default mesh color
+  isRotating: boolean = true; // Flag to control rotation
 
   constructor() {}
 
@@ -62,11 +63,11 @@ export class RenderingService {
         () =>
           new THREE.MeshPhysicalMaterial({
             color: this.meshColor,
-            roughness: 0.2,
-            metalness: 0.8,
-            clearcoat: 1.0,
-            clearcoatRoughness: 0.1,
-            reflectivity: 1.0,
+            roughness: 1.0,
+            metalness: 0.0,
+            clearcoat: 0.0,
+            clearcoatRoughness: 1.0,
+            reflectivity: 0.0,
           })
       );
     const mesh = new THREE.Mesh(geometry, defaultMaterials);
@@ -74,9 +75,9 @@ export class RenderingService {
   }
 
   startRenderingLoop(): void {
-    const animate = (time: number) => {
-      if (this.meshes['Box']) {
-        this.meshes['Box'].rotation.y = time / 2000;
+    const animate = () => {
+      if (this.meshes['Box'] && this.isRotating) {
+        this.meshes['Box'].rotation.y += 0.01;
       }
       this.renderer.render(this.scene, this.camera);
       requestAnimationFrame(animate);
@@ -167,5 +168,9 @@ export class RenderingService {
     } else {
       console.error(`Mesh ${meshName} not found.`);
     }
+  }
+
+  toggleRotation(): void {
+    this.isRotating = !this.isRotating;
   }
 }
