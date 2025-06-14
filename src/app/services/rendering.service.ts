@@ -10,6 +10,9 @@ import {
 })
 export class RenderingService {
   // This service is responsible for managing the rendering context and operations
+  width: number = window.innerWidth;
+  height: number = window.innerHeight;
+
   scene: THREE.Scene = new THREE.Scene();
   camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(
     75,
@@ -28,10 +31,13 @@ export class RenderingService {
   constructor() {}
 
   init(canvasElement: HTMLElement, width: number, height: number): void {
+
+    this.width = width;
+    this.height = height;
+    this.renderer.setPixelRatio(window.devicePixelRatio);
     this.canvas = canvasElement;
     this.camera.position.z = 3;
 
-    this.scene.background = new THREE.Color(0x112233); // Set background color to black
 
     this.renderer.setSize(width, height);
     this.canvas.appendChild(this.renderer.domElement);
@@ -50,6 +56,9 @@ export class RenderingService {
     const mesh = this.createMesh();
     this.meshes['Box'] = mesh;
     this.scene.add(mesh);
+    
+    this.scene.background = new THREE.Color(0x112233); // Set background color to black
+
     this.startRenderingLoop();
   }
 
@@ -172,5 +181,10 @@ export class RenderingService {
 
   toggleRotation(): void {
     this.isRotating = !this.isRotating;
+  }
+
+  setSharpness(pixelRatio: number): void {
+    this.renderer.setPixelRatio(pixelRatio);
+    this.renderer.setSize(this.width, this.height, false);
   }
 }

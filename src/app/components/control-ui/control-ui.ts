@@ -22,6 +22,8 @@ export class ControlUi {
   ];
   glossyFinish: boolean = false;
   isRotating: boolean = true;
+  sharpness: number = 1;
+
 
   constructor(private renderingService: RenderingService) { }
 
@@ -90,5 +92,14 @@ export class ControlUi {
   onToggleRotation(): void {
     this.isRotating = !this.isRotating;
     this.renderingService.toggleRotation();
+  }
+  
+  onSharpnessChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = parseFloat(input.value);
+    if (!isNaN(value) && value >= 1 && value <= 2) {
+      this.sharpness = value;
+      this.renderingService.setSharpness(this.sharpness);
+    }
   }
 }

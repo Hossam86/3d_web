@@ -27,7 +27,13 @@
         <input type="checkbox" [checked]="glossyFinish" (change)="onFinishStyleToggle($event)" />
         Glossy Finish
     </label>
-    <button (click)="onToggleRotation()">
+    <button class="slider-label" (click)="onToggleRotation()">
         {{ isRotating ? 'Stop Rotation' : 'Start Rotation' }}
     </button>
+
+    <label class="slider-label" > Pixel Ratio
+    <input id="sharpness" type="range" min="1" max="2" step="0.1" [value]="sharpness"
+        (input)="onSharpnessChange($event)">
+    <span style="margin-left: 0.5em;">{{ sharpness }}</span>
+    </label>
 </div>

@@ -10,7 +10,7 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 - [x] Provide six file input fields (one for each face) allowing the user to upload custom PNG/JPG images.
 - [x] Upon image upload, map each texture to the corresponding face of the box in real time.
 - [x] Sliders (or number inputs) to adjust the Width, Height, and Depth of the box, with a range from 0.2 to 2.0. Changing the box's dimensions should rebuild the geometry while preserving the current textures and material settings
-- [ ] control to start/stop the box's rotation.
+- [x] control to start/stop the box's rotation.
 - [x] Include a UI toggle to switch between Matte (high roughness) and Glossy (low roughness with clear-coat) finishes.
 - [ ] control to modify the sharpness of the scene.
 
