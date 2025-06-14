@@ -30,6 +30,8 @@ export class RenderingService {
     this.canvas = canvasElement;
     this.camera.position.z = 3;
 
+    this.scene.background = new THREE.Color(0x112233); // Set background color to black
+
     this.renderer.setSize(width, height);
     this.canvas.appendChild(this.renderer.domElement);
     //lights
@@ -40,7 +42,7 @@ export class RenderingService {
       this.directionalLightColor,
       1.0
     );
-    directionalLight.position.set(5, 5, 5).normalize();
+    directionalLight.position.set(2, 2, 20).normalize();
     this.scene.add(directionalLight);
 
     //mesh
@@ -119,7 +121,7 @@ export class RenderingService {
         const newMaterials = materials.map((mat, idx) =>
           idx === faceIndex
             ? new THREE.MeshPhysicalMaterial({
-                // color: this.meshColor,
+                color: this.meshColor,
                 roughness: 0.2,
                 metalness: 0.8,
                 clearcoat: 1.0,
